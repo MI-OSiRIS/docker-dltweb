@@ -3,9 +3,10 @@ FROM python:3.6-stretch
 MAINTAINER OpenLab <openlab@iu.edu>
 
 EXPOSE 42424/tcp
-
+RUN echo 'deb http://ftp.de.debian.org/debian jessie main non-free' >> /etc/apt/sources.list
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-RUN apt-get -y install sudo cmake gcc libaprutil1-dev lldpd libapr1-dev python-setuptools python-pip nodejs supervisor
+RUN apt-get update
+RUN apt-get -y install sudo cmake gcc libaprutil1-dev lldpd libapr1-dev python-setuptools python-pip nodejs supervisor snmp snmpd snmp-mibs-downloader
 
 RUN export uid=1000 gid=1000 && \
     mkdir -p /home/osiris && \
@@ -29,7 +30,9 @@ RUN git clone -b topology https://github.com/datalogistics/dlt-web
 
 ADD build.sh .
 RUN bash ./build.sh
-
+RUN sudo download-mibs
+ADD snmp.conf /etc/snmp/snmp.conf
+ADD snmpd.conf /etc/snmp/snmpd.conf
 ADD web.conf /etc/supervisor/conf.d/
 ADD properties.js $HOME/dlt-web/
 
