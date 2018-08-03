@@ -33,7 +33,7 @@ RUN bash ./build.sh
 RUN sudo download-mibs
 ADD snmp.conf /etc/snmp/snmp.conf
 ADD snmpd.conf /etc/snmp/snmpd.conf
-ADD web.conf /etc/supervisor/conf.d/
+#ADD web.conf /etc/supervisor/conf.d/
 ADD properties.js $HOME/dlt-web/
 
 ENV DEBUG DEBUG
