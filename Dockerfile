@@ -26,7 +26,7 @@ RUN git config --global user.email "osiris@openlab"
 RUN git config --global user.name "openlab"
 
 
-RUN git clone -b topology https://github.com/datalogistics/dlt-web
+RUN git clone -b osiris https://github.com/datalogistics/dlt-web
 
 ADD build.sh .
 RUN bash ./build.sh
