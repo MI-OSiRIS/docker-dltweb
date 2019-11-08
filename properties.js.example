@@ -5,7 +5,7 @@ _ = require('underscore');
 var self = {
   port : process.env.PORT || 42424,
   ENABLE_HTTPS : false,
-  // Defaulting to self-signed certs 
+  // Defaulting to self-signed certs
   ssl : {
     key : './cert/server.key',
     cert : './cert/server.crt',
@@ -14,26 +14,27 @@ var self = {
   sslOpt : {
     // Example of domain
     'dlt.open.sice.indiana.edu' : {
-      key : './cert/server.key',
-      cert : './cert/server.crt' 
-      // ca : "./ssl/dlt-client.csr"
+      key : './ssl/server.key',
+      cert : './ssl/server.crt',
+      ca : "./ssl/incommon_inter.cer"
     }
-  },  
+  },
   nat_map_file : './misc/idms_nat_map',
-  freegeoipUrl : "http://dlt.crest.iu.edu:8080",
+  freegeoipUrl : "http://api.ipstack.com",
+  freegeoKey   :  "?access_key=ce853dd619e7655fab8cc7a173697d51",
   jnlpMap : {
     'download': {
       'template': './misc/dlt-client.jnlp.tmpl',
-      'codebase': 'http://dlt.crest.iu.edu/webstart',
+      'codebase': 'http://dlt.incntre.iu.edu/webstart',
       'jarfile' : 'lib/dlt-client.jar'
     },
     'publish' : {
       'template': './misc/dlt-publisher.jnlp.tmpl',
-      'codebase': 'http://dlt.crest.iu.edu/webstart',
+      'codebase': 'http://dlt.incntre.iu.edu/webstart',
       'jarfile' : 'lib/dlt-publisher.jar'
     }
   },
-  // shoppingCart_logger : (function() {    
+  // shoppingCart_logger : (function() {
   //   var log = bunyan.createLogger({
   //     name: "dlt-web cart",
   //     streams : [
@@ -51,20 +52,23 @@ var self = {
   idms_server : "",
   routeMap : {
     // Aggregate from the following by default
-    'default': ['docker_ps'],
+    //'default'  : ['dev', 'dlt', 'monitor'],
+    'default': ['slate'],
     // Empty array is ignored and goes to default , otherwise using this to aggregate
     'measurements' : [],
     'exnodes' : [],
     'nodes': [],
     'nodes_id' : [],
+    //'services': ['dev', 'dlt', 'monitor', 'msu', 'um', 'wsu'] ,
     'services': [],
+    //'services_id' : ['dev', 'dlt', 'monitor', 'msu', 'um', 'wsu'],
     'services_id': [],
     'measurements': [],
     'measurements_id' : [],
     'metadata': [],
     'metadata_id' : [],
-    'data': [],
-    'data_id': [],
+    'data': ['slate',],
+    'data_id': ['slate',],
     'ports': [],
     'ports_id' : [],
     'wildfire' : []
@@ -76,82 +80,68 @@ var self = {
     'services_id' : ""
   },
   filterMap : {
-    services : "serviceType=datalogistics:wdln:ferry,datalogistics:wdln:base",
-    exnodes : "inline"
+    //services : "serviceType=ibp_server",
+    services : "",
+    exnodes : ""
   },
   wsfilterMap : {
-    //services : '{"serviceType":{"in":["datalogistics:wdln:ferry","datalogistics:wdln:base"]}}'
+    //services : '{"serviceType":{"in":["ibp_server"]}}'
+    services : ""
   },
   serviceMap : {
     local : {
       url : "localhost",
-      port : "9000",
+      port : "8888",
       use_ssl : false
     },
-    docker_ps : {
-      url : "periscope",
-      port: "9000",
+    slate : {
+      url : "slate.open.sice.indiana.edu",
+      port : "30100",
+      use_ssl : false
+    },
+    exnodedev : {
+      url: "unis.open.sice.indiana.edu",
+      port: "8890",
       use_ssl: false
     },
-    policies : {
-      url: "wdln-idms",
-      port: 9001,
+    iu: {
+      url: "iu-ps01.osris.org",
+      port: "8888",
       use_ssl: false
     },
     msu: {
-	url : "msu-ps01.osris.org",
-	port : "8888",
-	use_ssl : false,
+    	url : "msu-ps01.osris.org",
+    	port : "8888",
+    	use_ssl : false,
     },
     wsu: {
-	url : "wsu-ps01.osris.org",
-	port : "8888",
-	use_ssl : false,
+    	url : "wsu-ps01.osris.org",
+    	port : "8888",
+    	use_ssl : false,
     },
     um: {
-	url : "um-ps01.osris.org",
-	port : "8888",
-	use_ssl : false,
+    	url : "um-ps01.osris.org",
+    	port : "8888",
+    	use_ssl : false,
     },
     unis : {
-      url : "unis.crest.iu.edu",
+      url : "unis.open.sice.indiana.edu",
       port : "8888",
       use_ssl : false,
     },
-    dev : {
-      url : "dev.crest.iu.edu",
-      port : "8888",
-      key : null,
-      cert : null,
-      use_ssl : false
-    },
     dlt : {
-      url : "dlt.crest.iu.edu",
+      url : "dlt.open.sice.indiana.edu",
       port : "9000",
       key : "./ssl/dlt-client.pem",
       cert: "./ssl/dlt-client.pem",
       use_ssl: true
     },
-    monitor : {
-      url : "monitor.crest.iu.edu",
-      port : "9000",
-      key : null,
-      cert : null,
-      use_ssl : false
-    },
     dlt_ms : {
-      url : "dlt.crest.iu.edu",
+      url : "dlt.open.sice.indiana.edu",
       port : "9001",
       key : "./ssl/dlt-client.pem",
       cert : "./ssl/dlt-client.pem",
       use_ssl : true
-    },
-    monitor_ms : {
-      url : "monitor.crest.iu.edu",
-      port : "9001",
-      key : null,
-      cert : null,
-      use_ssl : false
     }
   },
   sslOptions : {
@@ -160,6 +150,7 @@ var self = {
   },
   usgs_row_searchurl : "http://earthexplorer.usgs.gov/EE/InventoryStream/pathrow",
   usgs_lat_searchurl : "http://earthexplorer.usgs.gov/EE/InventoryStream/latlong",
+  wildfire_policies_url : "http://dlt.open.sice.indiana.edu:8000",
   usgs_api_credentials : {
     username : "indianadlt",
     password : "indiana2014"
@@ -202,13 +193,13 @@ var deepObjectExtend = function(target, source) {
       deepObjectExtend(target[prop], source[prop]);
     else
       target[prop] = source[prop];
-  } 
+  }
   return target;
 };
 
 try {
   fs.accessSync("config.js",fs.R_OK);
-  var config = require("./config");  
+  var config = require("./config");
   self = deepObjectExtend(self,config);
 } catch(e) {
   console.error("No config file exists - Create a config.js and do module.exports with JSON obj to override server properties",e);
