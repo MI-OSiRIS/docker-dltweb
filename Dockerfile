@@ -3,10 +3,9 @@ FROM python:3.6-stretch
 MAINTAINER OpenLab <openlab@iu.edu>
 
 EXPOSE 42424/tcp
-RUN echo 'deb http://ftp.de.debian.org/debian jessie main non-free' >> /etc/apt/sources.list
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
 RUN apt-get update
-RUN apt-get -y install sudo cmake gcc libaprutil1-dev lldpd libapr1-dev python-setuptools python-pip nodejs supervisor
+RUN apt-get -y install sudo cmake gcc libaprutil1-dev lldpd libapr1-dev python-setuptools python-pip nodejs supervisor mongodb
 
 RUN export uid=1000 gid=1000 && \
     mkdir -p /home/osiris && \
@@ -17,7 +16,6 @@ RUN export uid=1000 gid=1000 && \
     chown ${uid}:${gid} -R /home/osiris && \
     chown ${uid}:${gid} -R /opt
     
-
 USER osiris
 ENV HOME /home/osiris
 WORKDIR $HOME
